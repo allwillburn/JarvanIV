@@ -1,4 +1,4 @@
-local ver = "0.01"
+local ver = "0.02"
 
 
 if FileExist(COMMON_PATH.."MixLib.lua") then
@@ -35,8 +35,10 @@ local JarvanIVMenu = Menu("JarvanIV", "JarvanIV")
 JarvanIVMenu:SubMenu("Combo", "Combo")
 
 JarvanIVMenu.Combo:Boolean("Q", "Use Q in combo", true)
+JarvanIVMenu.Combo:Slider("Qpred", "Q Hit Chance", 3,0,10,1)
 JarvanIVMenu.Combo:Boolean("W", "Use W in combo", true)
 JarvanIVMenu.Combo:Boolean("E", "Use E in combo", true)
+JarvanIVMenu.Combo:Slider("Epred", "E Hit Chance", 3,0,10,1)
 JarvanIVMenu.Combo:Boolean("R", "Use R in combo", true)
 JarvanIVMenu.Combo:Slider("RX", "X Enemies to Cast R",3,1,5,1)
 JarvanIVMenu.Combo:Boolean("Cutlass", "Use Cutlass", true)
@@ -52,8 +54,10 @@ JarvanIVMenu:SubMenu("AutoMode", "AutoMode")
 JarvanIVMenu.AutoMode:Boolean("Level", "Auto level spells", false)
 JarvanIVMenu.AutoMode:Boolean("Ghost", "Auto Ghost", false)
 JarvanIVMenu.AutoMode:Boolean("Q", "Auto Q", false)
+JarvanIVMenu.AutoMode:Slider("Qpred", "Q Hit Chance", 3,0,10,1)
 JarvanIVMenu.AutoMode:Boolean("W", "Auto W", false)
 JarvanIVMenu.AutoMode:Boolean("E", "Auto E", false)
+JarvanIVMenu.AutoMode:Slider("Epred", "E Hit Chance", 3,0,10,1)
 JarvanIVMenu.AutoMode:Boolean("R", "Auto R", false)
 
 JarvanIVMenu:SubMenu("LaneClear", "LaneClear")
@@ -90,6 +94,8 @@ OnTick(function (myHero)
         local BOTRK = GetItemSlot(myHero, 3153)
         local Cutlass = GetItemSlot(myHero, 3144)
         local Randuins = GetItemSlot(myHero, 3143)
+	local JarvanQ = {delay = .6, range = 770, width = 70, speed = math.huge}
+	local JarvanE = {delay = .5, range = 700, width = 175, speed = math.huge}
 
 	--AUTO LEVEL UP
 	if JarvanIVMenu.AutoMode.Level:Value() then
@@ -130,16 +136,23 @@ OnTick(function (myHero)
             if JarvanIVMenu.Combo.Cutlass:Value() and Cutlass > 0 and Ready(Cutlass) and ValidTarget(target, 700) then
 			 CastTargetSpell(target, Cutlass)
             end
-
-            if JarvanIVMenu.Combo.E:Value() and Ready(_E) and ValidTarget(target, 830) then
-			 CastTargetSpell(target, _E)
-	    end
+			
+	    if JarvanIVMenu.Combo.E:Value() and Ready(_E) and ValidTarget(target, 700) then
+                local EPred = GetPrediction(target,JarvanE)
+                       if EPred.hitChance > (JarvanIVMenu.Combo.Epred:Value() * 0.1) then
+                                 CastSkillShot(_E,EPred.castPos)
+                       end
+            end
+	
 
             if JarvanIVMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, 770) then
-		     if target ~= nil then 
-                         CastSkillShot(_Q, target)
-                     end
+                local QPred = GetPrediction(target,JarvanQ)
+                       if QPred.hitChance > (JarvanIVMenu.Combo.Qpred:Value() * 0.1) then
+                                 CastSkillShot(_Q,QPred.castPos)
+                       end
             end
+
+            
 
             if JarvanIVMenu.Combo.Tiamat:Value() and Tiamat > 0 and Ready(Tiamat) and ValidTarget(target, 350) then
 			CastSpell(Tiamat)
@@ -224,20 +237,22 @@ OnTick(function (myHero)
           end
       end
         --AutoMode
-        if JarvanIVMenu.AutoMode.Q:Value() then        
-          if Ready(_Q) and ValidTarget(target, 770) then
-		      CastSkillShot(_Q, target)
-          end
-        end 
+        if JarvanIVMenu.AutoMode.Q:Value() and Ready(_Q) and ValidTarget(target, 770) then
+                local QPred = GetPrediction(target,JarvanQ)
+                       if QPred.hitChance > (JarvanIVMenu.AutoMode.Qpred:Value() * 0.1) then
+                                 CastSkillShot(_Q,QPred.castPos)
+                       end
+        end
         if JarvanIVMenu.AutoMode.W:Value() then        
           if Ready(_W) and ValidTarget(target, 600) then
 	  	      CastSpell(_W)
           end
         end
-        if JarvanIVMenu.AutoMode.E:Value() then        
-	  if Ready(_E) and ValidTarget(target, 830) then
-		     CastTargetSpell(target, _E)
-	  end
+        if JarvanIVMenu.AutoMode.E:Value() and Ready(_E) and ValidTarget(target, 700) then
+                local EPred = GetPrediction(target,JarvanE)
+                       if EPred.hitChance > (JarvanIVMenu.AutoMode.Epred:Value() * 0.1) then
+                                 CastSkillShot(_E,EPred.castPos)
+                       end
         end
         if JarvanIVMenu.AutoMode.R:Value() then        
 	  if Ready(_R) and ValidTarget(target, 650) then
