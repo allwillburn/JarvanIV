@@ -1,4 +1,4 @@
-local ver = "0.03"
+local ver = "0.04"
 
 
 if FileExist(COMMON_PATH.."MixLib.lua") then
@@ -49,6 +49,7 @@ JarvanIVMenu.Combo:Boolean("RHydra", "Use RHydra", true)
 JarvanIVMenu.Combo:Boolean("YGB", "Use GhostBlade", true)
 JarvanIVMenu.Combo:Boolean("Gunblade", "Use Gunblade", true)
 JarvanIVMenu.Combo:Boolean("Randuins", "Use Randuins", true)
+JarvanIVMenu.Combo:Boolean("THydra", "Use THydra", true
 
 
 JarvanIVMenu:SubMenu("AutoMode", "AutoMode")
@@ -95,6 +96,7 @@ OnTick(function (myHero)
         local BOTRK = GetItemSlot(myHero, 3153)
         local Cutlass = GetItemSlot(myHero, 3144)
         local Randuins = GetItemSlot(myHero, 3143)
+	local THydra = GetItemSlot(myHero, 3748)	
 	local JarvanQ = {delay = .6, range = 770, width = 70, speed = math.huge}
 	local JarvanE = {delay = .5, range = 700, width = 175, speed = math.huge}
 
@@ -137,6 +139,10 @@ OnTick(function (myHero)
             if JarvanIVMenu.Combo.Cutlass:Value() and Cutlass > 0 and Ready(Cutlass) and ValidTarget(target, 700) then
 			 CastTargetSpell(target, Cutlass)
             end
+				
+	   if JarvanIVMenu.Combo.THydra:Value() and THydra > 0 and Ready(THydra) and ValidTarget(target, 400) then
+			CastSpell(THydra)
+            end		
 			
 	    if JarvanIVMenu.Combo.E:Value() and Ready(_E) and ValidTarget(target, 700) then
                 local EPred = GetPrediction(target,JarvanE)
@@ -146,7 +152,7 @@ OnTick(function (myHero)
             end
 	
 
-            if JarvanIVMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, 770) then
+            if JarvanIVMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, 700) then
                 local QPred = GetPrediction(target,JarvanQ)
                        if QPred.hitChance > (JarvanIVMenu.Combo.Qpred:Value() * 0.1) then
                                  CastSkillShot(_Q,QPred.castPos)
