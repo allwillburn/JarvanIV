@@ -49,7 +49,7 @@ JarvanIVMenu.Combo:Boolean("RHydra", "Use RHydra", true)
 JarvanIVMenu.Combo:Boolean("YGB", "Use GhostBlade", true)
 JarvanIVMenu.Combo:Boolean("Gunblade", "Use Gunblade", true)
 JarvanIVMenu.Combo:Boolean("Randuins", "Use Randuins", true)
-JarvanIVMenu.Combo:Boolean("THydra", "Use THydra", true
+JarvanIVMenu.Combo:Boolean("THydra", "Use THydra", true)
 
 
 JarvanIVMenu:SubMenu("AutoMode", "AutoMode")
